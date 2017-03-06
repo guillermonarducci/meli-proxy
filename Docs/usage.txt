@@ -1,0 +1,9 @@
+1) npm install
+
+2) npm start (Full version)
+
+or
+
+npm start -mockTarget (Mocks the target usign an internal http server instead of proxing to https://api.mercadolibre.com)
+
+

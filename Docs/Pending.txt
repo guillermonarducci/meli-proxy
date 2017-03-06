@@ -1,0 +1,14 @@
+1) Crear un archivo de configuracion de Redis
+
+	Example: redis-server /etc/redis.conf. You should use the redis.conf file included in the root directory of the Redis source code distribution as a template to write your configuration file.
+
+
+2) Install Redis in your Linux box in a proper way using an init script, so that after a restart everything will start again properly.
+
+	https://redis.io/topics/quickstart
+
+3) Usar process.env.LOG_LEVEL para winston
+
+4) Implementar profiling para winston (https://www.npmjs.com/package/winston)
+
+5) 

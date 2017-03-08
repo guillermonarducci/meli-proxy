@@ -7,16 +7,41 @@ const PROXY_PORT ='9000';
 const REDIS_HOST ='localhost';
 const REDIS_PORT ='6379';
 const LOG_LEVEL ='debug';
-
-const LUA_SCRIPT_SUM = '\ local val = tonumber(redis.call("get", KEYS[1])) \
-                    val = val + KEYS[2] \
-                    redis.call("set", KEYS[1], val) \
-                    return val'; 
-
-                    //TODO Si no existe la Key crearla con un TTL cofigurable
-          
+const DEFAULT_THRESHOLD ='25';
+const QUOTA_TTL_IN_SECONDS ='30';
 const MAX_LOCAL_REQUEST_COUNT = 5;
 
+/*
+const LUA_SCRIPT_SUM = '\ local val = tonumber(redis.call("get", KEYS[1])) \
+                            if val==nil then \
+                                redis.call("set", KEYS[1], KEYS[2]) \
+                            val=KEYS[2] \
+                            else  \
+                                val = val + KEYS[2] \
+                            end \
+                            redis.call("set", KEYS[1], val) \
+                            return val'; 
+*/
+
+var script = '\ local count = tonumber(redis.call("get", KEYS[1])) \
+                if count==nil then \
+                    redis.call("set", KEYS[1], KEYS[2]) \
+                    redis.call("expire", KEYS[1], QUOTA_TTL_VALUE) \
+                    count=KEYS[2] \
+                else  \
+                    count = count + KEYS[2] \
+                    local ttl = redis.call("ttl", KEYS[1]) \
+                    redis.call("set", KEYS[1], count) \
+                    redis.call("expire", KEYS[1], ttl) \
+                end \
+                local threshold = tonumber(redis.call("get", "threshold:" .. KEYS[1])) \
+                if threshold==nil then \
+                    threshold=THRESHOLD_VALUE \
+                end \
+                local ttl = redis.call("ttl", KEYS[1]) \
+                return (threshold - count) .. ":" .. ttl; ' //TODO Agregar TTL a la respuesta
+          
+const LUA_SCRIPT_SUM = script.replace(/THRESHOLD_VALUE/g, DEFAULT_THRESHOLD).replace(/QUOTA_TTL_VALUE/g,QUOTA_TTL_IN_SECONDS);          
 
 module.exports = {
     MELI_API_ENDPOINT: MELI_API_ENDPOINT,

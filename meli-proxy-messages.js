@@ -1,4 +1,4 @@
-/*TODO Reemplazar por i18n*/	
+/*TODO Replace with i18n*/	
 
 const MOCK_MODE_ON ='Mock Mode: ON --> Mock API Endpoint: ';
 const PROXY_LISTENING ='proxy listening on port ';

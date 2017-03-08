@@ -11,4 +11,14 @@
 
 4) Implementar profiling para winston (https://www.npmjs.com/package/winston)
 
-5) 
+5) Manejo de errores
+
+6) Race conditions en requestSources
+
+7) Refactorizar processRequest
+
+8) SourceInfo en nuevo js
+
+9) Validar path y combinacion de ip+path
+
+10) Validar limitExpireDate en hashmap para no ir a Redis hasta que expire el TTL.

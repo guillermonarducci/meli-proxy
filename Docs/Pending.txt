@@ -22,3 +22,6 @@
 9) Validar path y combinacion de ip+path
 
 10) Validar limitExpireDate en hashmap para no ir a Redis hasta que expire el TTL.
+
+11) Implementar ACL cargando claves con prefijo treshold: en Redis
+

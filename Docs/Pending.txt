@@ -13,15 +13,20 @@
 
 5) Manejo de errores
 
-6) Race conditions en requestSources
+6) Race conditions al incrementar en hashmap
 
-7) Refactorizar processRequest
+	VER: Mongo in-memory en lugar de variable Hasmap? https://docs.mongodb.com/manual/core/inmemory/
 
-8) SourceInfo en nuevo js
+	The in-memory storage engine uses document-level concurrency control for write operations. As a result, multiple clients can modify different documents of a collection at the same time.
+ 
+7) Validar path y combinacion de ip+path
 
-9) Validar path y combinacion de ip+path
+8) Implementar ACL cargando claves con prefijo treshold: en Redis
 
-10) Validar limitExpireDate en hashmap para no ir a Redis hasta que expire el TTL.
+9) Nodejs Cluster donde los Childs sumen y el Master acumule y hable contra Redis.
 
-11) Implementar ACL cargando claves con prefijo treshold: en Redis
+10) Asincronizar las escrituras en Redis usando kafka cada X cantidad de requests y leer sincronicamente las cantidades (directo contra redis) cada X/5 requests?
 
+11) Implementacion de Stats
+
+12) API REST Para administrar Quotas y ACL

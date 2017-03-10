@@ -7,41 +7,37 @@ const PROXY_PORT ='9000';
 const REDIS_HOST ='localhost';
 const REDIS_PORT ='6379';
 const LOG_LEVEL ='debug';
-const DEFAULT_THRESHOLD ='25';
-const QUOTA_TTL_IN_SECONDS ='30';
+const DEFAULT_THRESHOLD =25;
+const QUOTA_TTL_IN_SECONDS ='45';
 const MAX_LOCAL_REQUEST_COUNT = 5;
+const REQUESTS_UNTIL_QUOTA_CHECK = 2; 
 
-/*
-const LUA_SCRIPT_SUM = '\ local val = tonumber(redis.call("get", KEYS[1])) \
-                            if val==nil then \
-                                redis.call("set", KEYS[1], KEYS[2]) \
-                            val=KEYS[2] \
-                            else  \
-                                val = val + KEYS[2] \
+var scriptSum = '\  local count = tonumber(redis.call("get", KEYS[1])) \
+                    local ttl = nil \
+                    if count==nil then \
+                        redis.call("set", KEYS[1], KEYS[2]) \
+                        redis.call("expire", KEYS[1], QUOTA_TTL_VALUE) \
+                        count=KEYS[2] \
+                        ttl = QUOTA_TTL_VALUE \
+                    else  \
+                        count = count + KEYS[2] \
+                        ttl = redis.call("ttl", KEYS[1]) \
+                        redis.call("set", KEYS[1], count) \
+                        redis.call("expire", KEYS[1], ttl) \
+                    end \
+                    return count .. ":" .. ttl;'; 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////NO FUNCIONA EXPIRE TTL
+
+const LUA_SCRIPT_SUM = scriptSum.replace(/QUOTA_TTL_VALUE/g,QUOTA_TTL_IN_SECONDS);    
+
+/*const LUA_SCRIPT_GET = '\   local count = tonumber(redis.call("get", KEYS[1])) \
+                            if count==nil then \
+                                count=0 \
                             end \
-                            redis.call("set", KEYS[1], val) \
-                            return val'; 
-*/
-
-var script = '\ local count = tonumber(redis.call("get", KEYS[1])) \
-                if count==nil then \
-                    redis.call("set", KEYS[1], KEYS[2]) \
-                    redis.call("expire", KEYS[1], QUOTA_TTL_VALUE) \
-                    count=KEYS[2] \
-                else  \
-                    count = count + KEYS[2] \
-                    local ttl = redis.call("ttl", KEYS[1]) \
-                    redis.call("set", KEYS[1], count) \
-                    redis.call("expire", KEYS[1], ttl) \
-                end \
-                local threshold = tonumber(redis.call("get", "threshold:" .. KEYS[1])) \
-                if threshold==nil then \
-                    threshold=THRESHOLD_VALUE \
-                end \
-                local ttl = redis.call("ttl", KEYS[1]) \
-                return (threshold - count) .. ":" .. ttl; ' //TODO Agregar TTL a la respuesta
+                            local ttl = redis.call("ttl", KEYS[1]) \
+                            return count .. ":" .. ttl'*/
           
-const LUA_SCRIPT_SUM = script.replace(/THRESHOLD_VALUE/g, DEFAULT_THRESHOLD).replace(/QUOTA_TTL_VALUE/g,QUOTA_TTL_IN_SECONDS);          
 
 module.exports = {
     MELI_API_ENDPOINT: MELI_API_ENDPOINT,
@@ -54,6 +50,9 @@ module.exports = {
     REDIS_PORT: REDIS_PORT,
     LUA_SCRIPT_SUM: LUA_SCRIPT_SUM,
     MAX_LOCAL_REQUEST_COUNT: MAX_LOCAL_REQUEST_COUNT,
-    LOG_LEVEL: LOG_LEVEL
+    LOG_LEVEL: LOG_LEVEL,
+    REQUESTS_UNTIL_QUOTA_CHECK: REQUESTS_UNTIL_QUOTA_CHECK,
+    //LUA_SCRIPT_GET: LUA_SCRIPT_GET,
+    DEFAULT_THRESHOLD
       
 };

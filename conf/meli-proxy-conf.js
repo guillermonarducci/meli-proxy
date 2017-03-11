@@ -10,6 +10,7 @@ const LOG_LEVEL ='debug';
 const DEFAULT_QUOTA =25;
 const QUOTA_TTL_IN_SECONDS ='40';
 const MAX_LOCAL_REQUEST_COUNT = 5;
+const MAX_LOCAL_STATS_COUNT = 10;
 
 var scriptSum = '\  local count = tonumber(redis.call("get", KEYS[1])) \
                     local ttl = nil \
@@ -40,6 +41,7 @@ module.exports = {
     REDIS_PORT: REDIS_PORT,
     LUA_SCRIPT_SUM: LUA_SCRIPT_SUM,
     MAX_LOCAL_REQUEST_COUNT: MAX_LOCAL_REQUEST_COUNT,
+    MAX_LOCAL_STATS_COUNT: MAX_LOCAL_STATS_COUNT,
     LOG_LEVEL: LOG_LEVEL,
     DEFAULT_QUOTA   
 };

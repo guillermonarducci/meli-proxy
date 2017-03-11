@@ -1,7 +1,7 @@
 var http = require('http');
 var url = require('url');
-var msg = require('./meli-proxy-messages.js');
-var conf = require('./meli-proxy-conf.js');
+var msg = require('./conf/meli-proxy-messages.js');
+var conf = require('./conf/meli-proxy-conf.js');
 
 http.createServer(function(req, res) {
 

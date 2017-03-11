@@ -1,10 +1,12 @@
 var http = require('http');
 var httpProxy = require('http-proxy');
-var url = require('url');
 var HashMap = require('hashmap'); 
 var redis = require('redis');
-var conf = require('./meli-proxy-conf.js');
-var msg = require('./meli-proxy-messages.js');
+var conf = require('./conf/meli-proxy-conf.js');
+var msg = require('./conf/meli-proxy-messages.js');
+var Request = require('./model/request.js');
+var RequestStat = require('./model/requestStat.js');
+var ElementInfo = require('./model/elementInfo.js');
 var winston = require('winston');
 winston.level = conf.LOG_LEVEL; //TODO use process.env.LOG_LEVEL 
 
@@ -13,6 +15,7 @@ var mockEnabled=(process.argv[2]==conf.MOCK_PARAMETER);
 
 var localRequestsCount = new HashMap(); //Module variable shared by all instances of this js
 var totalRequestsCache = new HashMap(); //Module variable shared by all instances of this js
+var statsMap = new HashMap(); //Module variable shared by all instances of this js
 
 if (mockEnabled){
     apiEndpoint=conf.MOCK_API_ENDPOINT + ':' + conf.MOCK_API_PORT;
@@ -24,10 +27,10 @@ function processRequest(req, res) {
 
     winston.debug('');
 
-    var pathname = url.parse(req.url).pathname;
-    var ip = req.connection.remoteAddress.replace(/::ffff:/g,'');;
+    var request = new Request(req);
+    handleStats(request);
 
-    var auditedElementsArray = [ip]; //Request elements to be controlled, use [ip, pathname, ip+pathname] to controll all.
+    var auditedElementsArray = [request.getIp()]; //Request elements to be controlled, use [request.getIp(),request.getPath(),request.getIp()+request.getPath] to controll all.
        
     if (quotaExceed(auditedElementsArray) && !cacheExpired(auditedElementsArray)) {
 
@@ -151,12 +154,6 @@ function hasElement (hashmap, element) {
     return hashmap.has(element);
 };
 
-function ElementInfo(requestsCount, expireDate) {
-
-    this.requestsCount = requestsCount;
-    this.expireDate = expireDate;
-};
-
 var proxy = httpProxy.createProxyServer({secure: false});
 
 http.createServer(processRequest).listen(conf.PROXY_PORT, function() {
@@ -169,3 +166,27 @@ http.createServer(processRequest).listen(conf.PROXY_PORT, function() {
     }
     
 });
+
+function handleStats (request) {
+
+    var stat = statsMap.get(request.getUrl());
+
+    if (stat) {
+
+        stat.increment();
+
+        if (stat.getRequestCount()>=conf.MAX_LOCAL_STATS_COUNT){
+
+            winston.debug("STATS: " + JSON.stringify(stat));
+            stat.setRequestCount(0);
+        } 
+
+        statsMap.set(stat);
+ 
+    } else {
+
+        var requestStat = new RequestStat(request, 1);
+        statsMap.set(request.getUrl(), requestStat);
+    }
+
+};

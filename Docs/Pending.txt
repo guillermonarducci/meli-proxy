@@ -1,32 +1,24 @@
-1) Crear un archivo de configuracion de Redis
+1) Usar process.env.LOG_LEVEL para winston
 
-	Example: redis-server /etc/redis.conf. You should use the redis.conf file included in the root directory of the Redis source code distribution as a template to write your configuration file.
+2) Manejo de errores
 
-
-2) Install Redis in your Linux box in a proper way using an init script, so that after a restart everything will start again properly.
-
-	https://redis.io/topics/quickstart
-
-3) Usar process.env.LOG_LEVEL para winston
-
-4) Implementar profiling para winston (https://www.npmjs.com/package/winston)
-
-5) Manejo de errores
-
-6) Race conditions al incrementar en hashmap
+3) Race conditions al incrementar en hashmap
 
 	VER: Mongo in-memory en lugar de variable Hasmap? https://docs.mongodb.com/manual/core/inmemory/
 
 	The in-memory storage engine uses document-level concurrency control for write operations. As a result, multiple clients can modify different documents of a collection at the same time.
  
-7) Validar path y combinacion de ip+path
+4) Implementar ACL cargando claves con prefijo treshold: en Redis
 
-8) Implementar ACL cargando claves con prefijo treshold: en Redis
+5) Nodejs Cluster donde los Childs sumen y el Master acumule y hable contra Redis.
 
-9) Nodejs Cluster donde los Childs sumen y el Master acumule y hable contra Redis.
+6) Asincronizar las escrituras en Redis usando kafka cada X cantidad de requests?
 
-10) Asincronizar las escrituras en Redis usando kafka cada X cantidad de requests y leer sincronicamente las cantidades (directo contra redis) cada X/5 requests?
+7) Logstash + kafka + ELK para guardar  visualizar estadisticas
 
-11) Implementacion de Stats
+8) API REST Para administrar Quotas y ACL
 
-12) API REST Para administrar Quotas y ACL
+9) Tests con npm
+
+10) Carga
+

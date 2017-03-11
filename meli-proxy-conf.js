@@ -7,10 +7,9 @@ const PROXY_PORT ='9000';
 const REDIS_HOST ='localhost';
 const REDIS_PORT ='6379';
 const LOG_LEVEL ='debug';
-const DEFAULT_THRESHOLD =25;
-const QUOTA_TTL_IN_SECONDS ='45';
+const DEFAULT_QUOTA =25;
+const QUOTA_TTL_IN_SECONDS ='40';
 const MAX_LOCAL_REQUEST_COUNT = 5;
-const REQUESTS_UNTIL_QUOTA_CHECK = 2; 
 
 var scriptSum = '\  local count = tonumber(redis.call("get", KEYS[1])) \
                     local ttl = nil \
@@ -27,19 +26,10 @@ var scriptSum = '\  local count = tonumber(redis.call("get", KEYS[1])) \
                     end \
                     return count .. ":" .. ttl;'; 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////NO FUNCIONA EXPIRE TTL
-
 const LUA_SCRIPT_SUM = scriptSum.replace(/QUOTA_TTL_VALUE/g,QUOTA_TTL_IN_SECONDS);    
 
-/*const LUA_SCRIPT_GET = '\   local count = tonumber(redis.call("get", KEYS[1])) \
-                            if count==nil then \
-                                count=0 \
-                            end \
-                            local ttl = redis.call("ttl", KEYS[1]) \
-                            return count .. ":" .. ttl'*/
-          
-
 module.exports = {
+    
     MELI_API_ENDPOINT: MELI_API_ENDPOINT,
     MOCK_API_ENDPOINT: MOCK_API_ENDPOINT,
     MOCK_API_PORT: MOCK_API_PORT,
@@ -51,8 +41,5 @@ module.exports = {
     LUA_SCRIPT_SUM: LUA_SCRIPT_SUM,
     MAX_LOCAL_REQUEST_COUNT: MAX_LOCAL_REQUEST_COUNT,
     LOG_LEVEL: LOG_LEVEL,
-    REQUESTS_UNTIL_QUOTA_CHECK: REQUESTS_UNTIL_QUOTA_CHECK,
-    //LUA_SCRIPT_GET: LUA_SCRIPT_GET,
-    DEFAULT_THRESHOLD
-      
+    DEFAULT_QUOTA   
 };

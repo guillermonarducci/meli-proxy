@@ -30,7 +30,7 @@ function processRequest(req, res) {
     var request = new Request(req);
     handleStats(request);
 
-    var auditedElementsArray = [request.getIp()]; //Request elements to be controlled, use [request.getIp(),request.getPath(),request.getIp()+request.getPath] to controll all.
+    var auditedElementsArray = [request.getIp(), request.getPath()]; //Request elements to be controlled, use [request.getIp(),request.getPath(),request.getIp()+request.getPath] to controll all.
        
     if (quotaExceed(auditedElementsArray) && !cacheExpired(auditedElementsArray)) {
 
@@ -52,21 +52,26 @@ function quotaExceed (auditedElementsArray) { //If one element is exceed, the re
 
     auditedElementsArray.forEach(function(element){
  
-
         if (hasElement(totalRequestsCache, element)) {
 
             var elementFromCache = getElementInfo(totalRequestsCache, element);
 
-            winston.debug('REMAINING QUOTA FOR '+ element +'  --->  ' + (conf.DEFAULT_QUOTA - elementFromCache.requestsCount));
+            var quota = conf.DEFAULT_QUOTA; 
 
-            exceed = exceed || (elementFromCache.requestsCount >= conf.DEFAULT_QUOTA);
+            if (elementFromCache.quota) {
+                
+                quota = parseInt(elementFromCache.quota,10);
+            }
+
+            winston.debug('REMAINING QUOTA FOR '+ element +'  --->  ' + ( quota - elementFromCache.requestsCount));
+            exceed = exceed || (elementFromCache.requestsCount >= quota);
         } 
     });
 
     return exceed;
 }
 
-function cacheExpired (auditedElementsArray) { //if one element is expired, the cache is expired
+function cacheExpired (auditedElementsArray) { //when all elements are expired, the cache is expired (check)
 
     var expired = true;
 
@@ -120,17 +125,18 @@ function addOnRedis (element, elementInfo, callback) {
 
         winston.debug('Adding on Redis ' + elementInfo.requestsCount + ' requests to key ' + element );
 
-        this.eval(conf.LUA_SCRIPT_SUM, 2, element, elementInfo.requestsCount, function (err, res){
+        this.eval(conf.LUA_SCRIPT_SUM, 3, element, elementInfo.requestsCount, conf.REDIS_QUOTA_PREFIX, function (err, res){
 
             if (err) throw err;
 
             var requestsCount=res.split(":")[0];
             var ttl = res.split(":")[1];
+            var quota = res.split(":")[2];
 
             var currentDate = new Date();
             var expireDate = currentDate.getTime() + (1000 * ttl);
             
-            var updatedElement = new ElementInfo(requestsCount,expireDate);
+            var updatedElement = new ElementInfo(requestsCount,expireDate, quota);
             setElementInfo(totalRequestsCache, element, updatedElement); //updates Elements in Cache
 
             elementInfo.requestsCount=0; 

@@ -11,6 +11,7 @@ const DEFAULT_QUOTA =25;
 const QUOTA_TTL_IN_SECONDS ='40';
 const MAX_LOCAL_REQUEST_COUNT = 5;
 const MAX_LOCAL_STATS_COUNT = 10;
+const REDIS_QUOTA_PREFIX = '_quota:';
 
 var scriptSum = '\  local count = tonumber(redis.call("get", KEYS[1])) \
                     local ttl = nil \
@@ -25,7 +26,14 @@ var scriptSum = '\  local count = tonumber(redis.call("get", KEYS[1])) \
                         redis.call("set", KEYS[1], count) \
                         redis.call("expire", KEYS[1], ttl) \
                     end \
-                    return count .. ":" .. ttl;'; 
+                    local response=nil \
+                    local quota = tonumber(redis.call("get",KEYS[3] .. KEYS[1])) \
+                    if quota==nil then \
+                        response = count .. ":" .. ttl \
+                    else \
+                        response = count .. ":" .. ttl .. ":" .. quota\
+                    end \
+                    return response'; 
 
 const LUA_SCRIPT_SUM = scriptSum.replace(/QUOTA_TTL_VALUE/g,QUOTA_TTL_IN_SECONDS);    
 
@@ -43,5 +51,6 @@ module.exports = {
     MAX_LOCAL_REQUEST_COUNT: MAX_LOCAL_REQUEST_COUNT,
     MAX_LOCAL_STATS_COUNT: MAX_LOCAL_STATS_COUNT,
     LOG_LEVEL: LOG_LEVEL,
-    DEFAULT_QUOTA   
+    DEFAULT_QUOTA,
+    REDIS_QUOTA_PREFIX   
 };

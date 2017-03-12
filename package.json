@@ -4,7 +4,8 @@
   "description": "Proxy para control de acceso y estadisticas de uso de las APIs de MercadoLibre",
   "main": "meli-proxy.js",
   "scripts": {
-    "start": "node meli-proxy.js"
+    "start": "node meli-proxy.js",
+    "test": "jasmine-node spec"
   },
   "author": "Guillermo Narducci",
   "license": "ISC",
@@ -14,11 +15,13 @@
   "dependencies": {
     "hashmap": "^2.0.6",
     "http-proxy": "^1.16.2",
+    "jasmine-node": "^1.14.5",
     "redis": "^2.6.5",
+    "request": "^2.81.0",
     "winston": "^2.3.1"
   },
   "repository": {
-  "type": "git",
-  "url": "https://github.com/guillermonarducci/meli-proxy.git"
+    "type": "git",
+    "url": "https://github.com/guillermonarducci/meli-proxy.git"
   }
 }

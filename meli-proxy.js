@@ -10,15 +10,17 @@ var ElementInfo = require('./model/elementInfo.js');
 var winston = require('winston');
 winston.level = conf.LOG_LEVEL; //TODO use process.env.LOG_LEVEL 
 
-var apiEndpoint=conf.MELI_API_ENDPOINT;
+var apiEndpoint=conf.MELI_API_BASE;
 var mockEnabled=(process.argv[2]==conf.MOCK_PARAMETER);
 
 var localRequestsCount = new HashMap(); //Module variable shared by all instances of this js
 var totalRequestsCache = new HashMap(); //Module variable shared by all instances of this js
 var statsMap = new HashMap(); //Module variable shared by all instances of this js
 
+var exports = module.exports = {};//For testing
+
 if (mockEnabled){
-    apiEndpoint=conf.MOCK_API_ENDPOINT + ':' + conf.MOCK_API_PORT;
+    apiEndpoint=conf.MOCK_API_BASE + ':' + conf.MOCK_API_PORT;
     winston.info(msg.MOCK_MODE_ON + apiEndpoint);
     winston.warn(msg.MOCK_SERVER_REQUIRED);    
 }
@@ -30,7 +32,7 @@ function processRequest(req, res) {
     var request = new Request(req);
     handleStats(request);
 
-    var auditedElementsArray = [request.getIp(), request.getPath()]; //Request elements to be controlled, use [request.getIp(),request.getPath(),request.getIp()+request.getPath] to controll all.
+    var auditedElementsArray = [request.getPath()]; //Request elements to be controlled, use [request.getIp(),request.getPath(),request.getIp()+request.getPath] to controll all.
        
     if (quotaExceed(auditedElementsArray) && !cacheExpired(auditedElementsArray)) {
 
@@ -71,7 +73,7 @@ function quotaExceed (auditedElementsArray) { //If one element is exceed, the re
     return exceed;
 }
 
-function cacheExpired (auditedElementsArray) { //when all elements are expired, the cache is expired (check)
+function cacheExpired (auditedElementsArray) { //when all elements expire, the cache is expired (check)
 
     var expired = true;
 
@@ -99,7 +101,7 @@ function incrementRequestCount (auditedElementsArray) {
         if (!hasElement(localRequestsCount,element)){ //If this element doesn't exist in local counters, a new local counter is created
 
             var elementInfo = new ElementInfo(1,null);                                    
-            setElementInfo(localRequestsCount, element, elementInfo);  //TODO Race conditions en contadores del hashmap. Ver https://www.npmjs.com/package/shulz ?                        
+            setElementInfo(localRequestsCount, element, elementInfo);                        
             winston.debug('Added Locally one request for ' + element + '--> TOTAL: 1' );          
 
         } else { //If the element exists, its incremented by one
@@ -162,7 +164,7 @@ function hasElement (hashmap, element) {
 
 var proxy = httpProxy.createProxyServer({secure: false});
 
-http.createServer(processRequest).listen(conf.PROXY_PORT, function() {
+var server = http.createServer(processRequest).listen(conf.PROXY_PORT, function() {
 
     winston.info(msg.PROXY_LISTENING + conf.PROXY_PORT);
 
@@ -195,4 +197,10 @@ function handleStats (request) {
         statsMap.set(request.getUrl(), requestStat);
     }
 
+};
+
+
+exports.closeServers = function(){
+  server.close();
+  proxy.close();
 };

@@ -1,24 +1,16 @@
-1) Usar process.env.LOG_LEVEL para winston
 
-2) Manejo de errores
+1) Manejo de errores
 
-3) Race conditions al incrementar en hashmap
+2) Carga
 
-	VER: Mongo in-memory en lugar de variable Hasmap? https://docs.mongodb.com/manual/core/inmemory/
-
-	The in-memory storage engine uses document-level concurrency control for write operations. As a result, multiple clients can modify different documents of a collection at the same time.
+3) AWS
  
-4) Implementar ACL cargando claves con prefijo treshold: en Redis
+4) Nodejs Cluster donde los Childs sumen y el Master acumule y hable contra Redis. IPC para comunicacion entre Master y Childs
 
-5) Nodejs Cluster donde los Childs sumen y el Master acumule y hable contra Redis.
+5) Logstash + kafka + ELK para guardar y visualizar estadisticas
 
-6) Asincronizar las escrituras en Redis usando kafka cada X cantidad de requests?
+6) API REST Para administrar Quotas 
 
-7) Logstash + kafka + ELK para guardar  visualizar estadisticas
 
-8) API REST Para administrar Quotas y ACL
 
-9) Tests con npm
-
-10) Carga
 

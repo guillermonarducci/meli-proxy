@@ -27,25 +27,23 @@ if (mockEnabled){
 
 function processRequest(req, res) {
 
-    winston.debug('');
+        var request = new Request(req);
+        handleStats(request);
 
-    var request = new Request(req);
-    handleStats(request);
+        var auditedElementsArray = [request.getPath()]; //Request elements to be controlled, use [request.getIp(),request.getPath(),request.getIp()+request.getPath] to controll all.
+           
+        if (quotaExceed(auditedElementsArray) && !cacheExpired(auditedElementsArray)) {
 
-    var auditedElementsArray = [request.getPath()]; //Request elements to be controlled, use [request.getIp(),request.getPath(),request.getIp()+request.getPath] to controll all.
-       
-    if (quotaExceed(auditedElementsArray) && !cacheExpired(auditedElementsArray)) {
+            winston.info(msg.HTTP_429_MESSAGE + "--> " + request.getUrl());
+            res.writeHead(429);
+            res.end();
 
-        winston.info(msg.HTTP_429_MESSAGE);
-        res.writeHead(429);
-        res.end();
+        }  else {
 
-    }  else {
+            incrementRequestCount(auditedElementsArray);
 
-        incrementRequestCount(auditedElementsArray);
-
-        proxy.web(req, res, { target: apiEndpoint });//Proxy Forward
-    }
+            proxy.web(req, res, { target: apiEndpoint });//Proxy Forward
+        }          
 };     
 
 function quotaExceed (auditedElementsArray) { //If one element is exceed, the request is exceed
@@ -90,7 +88,7 @@ function cacheExpired (auditedElementsArray) { //when all elements expire, the c
             winston.debug('CACHE FOR '+ element +' EXPIRED: ' + expired);  
         }
     });
-     
+
     return expired;
 }
 
@@ -122,29 +120,41 @@ function incrementRequestCount (auditedElementsArray) {
 function addOnRedis (element, elementInfo, callback) {
 
     var redisCli = redis.createClient(conf.REDIS_PORT, conf.REDIS_HOST, {no_ready_check: true});
-
+  
     redisCli.on('connect', function() {
 
         winston.debug('Adding on Redis ' + elementInfo.requestsCount + ' requests to key ' + element );
 
         this.eval(conf.LUA_SCRIPT_SUM, 3, element, elementInfo.requestsCount, conf.REDIS_QUOTA_PREFIX, function (err, res){
 
-            if (err) throw err;
+            if (err) {
 
-            var requestsCount=res.split(":")[0];
-            var ttl = res.split(":")[1];
-            var quota = res.split(":")[2];
+                winston.error("Error procesing Redis Script: " + err);
+            };
 
-            var currentDate = new Date();
-            var expireDate = currentDate.getTime() + (1000 * ttl);
-            
-            var updatedElement = new ElementInfo(requestsCount,expireDate, quota);
-            setElementInfo(totalRequestsCache, element, updatedElement); //updates Elements in Cache
+            try {
 
-            elementInfo.requestsCount=0; 
-            setElementInfo(localRequestsCount, element, elementInfo); //resets local counter  
+                var requestsCount=res.split(":")[0];
+                var ttl = res.split(":")[1];
+                var quota = res.split(":")[2];
+
+                var currentDate = new Date();
+                var expireDate = currentDate.getTime() + (1000 * ttl);
+                
+                var updatedElement = new ElementInfo(requestsCount,expireDate, quota);
+                setElementInfo(totalRequestsCache, element, updatedElement); //updates Elements in Cache
+
+                elementInfo.requestsCount=0; 
+                setElementInfo(localRequestsCount, element, elementInfo); //resets local counter 
+
+            } catch (error) {
+
+                winston.error("Unexpected error: " + error + ". Stack: " + error.stack);
+            }     
         }); 
     });
+
+    
 }
 
 function getElementInfo(hashmap, element){

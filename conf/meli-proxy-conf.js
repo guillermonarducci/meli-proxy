@@ -3,15 +3,14 @@ const MOCK_API_BASE ='http://localhost';
 const MOCK_API_PORT = '9001';
 const MOCK_API_RESPONSE = '{"id": "MLA340374","name": "iPhone 4S","picture": null,"permalink": null,"total_items_in_this_category": 1318}';
 const MOCK_PARAMETER ='mockTarget';
-const PROXY_PORT ='9000';
 const PROXY_BASE ='http://localhost';
 const REDIS_HOST ='localhost';
 const REDIS_PORT ='6379';
 const LOG_LEVEL ='debug';
-const DEFAULT_QUOTA =25;
-const QUOTA_TTL_IN_SECONDS ='40';
-const MAX_LOCAL_REQUEST_COUNT = 5;
-const MAX_LOCAL_STATS_COUNT = 10;
+const DEFAULT_QUOTA =380000;
+const QUOTA_TTL_IN_SECONDS ='86400';
+const MAX_LOCAL_REQUEST_COUNT = 1000;
+const MAX_LOCAL_STATS_COUNT = 1000;
 const REDIS_QUOTA_PREFIX = '_quota:';
 
 var scriptSum = '\  local count = tonumber(redis.call("get", KEYS[1])) \
@@ -45,7 +44,6 @@ module.exports = {
     MOCK_API_PORT: MOCK_API_PORT,
     MOCK_API_RESPONSE: MOCK_API_RESPONSE,
     MOCK_PARAMETER: MOCK_PARAMETER,
-    PROXY_PORT: PROXY_PORT,
     PROXY_BASE: PROXY_BASE,
     REDIS_HOST: REDIS_HOST,
     REDIS_PORT: REDIS_PORT,

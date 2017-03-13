@@ -11,13 +11,20 @@ var winston = require('winston');
 winston.level = conf.LOG_LEVEL; //TODO use process.env.LOG_LEVEL 
 
 var apiEndpoint=conf.MELI_API_BASE;
-var mockEnabled=(process.argv[2]==conf.MOCK_PARAMETER);
+var proxyPort=parseInt(process.argv[2], 10);
+var mockEnabled=(process.argv[3]==conf.MOCK_PARAMETER);
 
 var localRequestsCount = new HashMap(); //Module variable shared by all instances of this js
 var totalRequestsCache = new HashMap(); //Module variable shared by all instances of this js
 var statsMap = new HashMap(); //Module variable shared by all instances of this js
 
 var exports = module.exports = {};//For testing
+
+if ( !proxyPort || typeof proxyPort != "number" ){
+    winston.error("Proxy Port not specified.");
+    winston.error("Usage: npm start PORT [mockTarget]");
+    process.exit();    
+}
 
 if (mockEnabled){
     apiEndpoint=conf.MOCK_API_BASE + ':' + conf.MOCK_API_PORT;
@@ -30,7 +37,7 @@ function processRequest(req, res) {
         var request = new Request(req);
         handleStats(request);
 
-        var auditedElementsArray = [request.getPath()]; //Request elements to be controlled, use [request.getIp(),request.getPath(),request.getIp()+request.getPath] to controll all.
+        var auditedElementsArray = [request.getIp()]; //Request elements to be controlled, use [request.getIp(),request.getPath(),request.getIp()+request.getPath()] to controll all.
            
         if (quotaExceed(auditedElementsArray) && !cacheExpired(auditedElementsArray)) {
 
@@ -105,27 +112,32 @@ function incrementRequestCount (auditedElementsArray) {
         } else { //If the element exists, its incremented by one
 
             var elementInfo = getElementInfo(localRequestsCount,element);                                                               
-            elementInfo.requestsCount++;                                                                                                 
+            elementInfo.requestsCount++;                                                                                          
             setElementInfo(localRequestsCount, element, elementInfo);  
-            winston.debug('Added Locally one request for ' + element + '--> TOTAL: ' + elementInfo.requestsCount);                            
+            winston.debug('Added Locally one request for ' + element + '--> TOTAL: ' + elementInfo.requestsCount);
 
             if (elementInfo.requestsCount>=conf.MAX_LOCAL_REQUEST_COUNT) { //If local count for this element exceeds local count threshold, count is sent to Redis async. 
 
-                addOnRedis (element, elementInfo);
+                addOnRedis (element, elementInfo.requestsCount);
+
+                elementInfo.requestsCount=0; 
+                setElementInfo(localRequestsCount, element, elementInfo); //resets local counter 
             }
+            
         }        
     });
+   
 };
 
-function addOnRedis (element, elementInfo, callback) {
+function addOnRedis (element, requestsCount) {
 
     var redisCli = redis.createClient(conf.REDIS_PORT, conf.REDIS_HOST, {no_ready_check: true});
   
     redisCli.on('connect', function() {
 
-        winston.debug('Adding on Redis ' + elementInfo.requestsCount + ' requests to key ' + element );
+        winston.debug('Adding on Redis ' + requestsCount + ' requests to key ' + element );
 
-        this.eval(conf.LUA_SCRIPT_SUM, 3, element, elementInfo.requestsCount, conf.REDIS_QUOTA_PREFIX, function (err, res){
+        this.eval(conf.LUA_SCRIPT_SUM, 3, element, requestsCount, conf.REDIS_QUOTA_PREFIX, function (err, res){
 
             if (err) {
 
@@ -134,18 +146,15 @@ function addOnRedis (element, elementInfo, callback) {
 
             try {
 
-                var requestsCount=res.split(":")[0];
+                var totalCount=res.split(":")[0];
                 var ttl = res.split(":")[1];
                 var quota = res.split(":")[2];
 
                 var currentDate = new Date();
                 var expireDate = currentDate.getTime() + (1000 * ttl);
                 
-                var updatedElement = new ElementInfo(requestsCount,expireDate, quota);
+                var updatedElement = new ElementInfo(totalCount,expireDate, quota);
                 setElementInfo(totalRequestsCache, element, updatedElement); //updates Elements in Cache
-
-                elementInfo.requestsCount=0; 
-                setElementInfo(localRequestsCount, element, elementInfo); //resets local counter 
 
             } catch (error) {
 
@@ -153,8 +162,6 @@ function addOnRedis (element, elementInfo, callback) {
             }     
         }); 
     });
-
-    
 }
 
 function getElementInfo(hashmap, element){
@@ -174,9 +181,9 @@ function hasElement (hashmap, element) {
 
 var proxy = httpProxy.createProxyServer({secure: false});
 
-var server = http.createServer(processRequest).listen(conf.PROXY_PORT, function() {
+var server = http.createServer(processRequest).listen(proxyPort, function() {
 
-    winston.info(msg.PROXY_LISTENING + conf.PROXY_PORT);
+    winston.info(msg.PROXY_LISTENING + proxyPort);
 
     if (!mockEnabled) {
 

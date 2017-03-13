@@ -1,0 +1,61 @@
+Escenario: artillery quick --duration 4 --rate 50 -n 2000 http://localhost:9000/categories/MLA97994
+
+Resultados
+
+1 meli-proxy
+
+all scenarios completed
+Complete report @ 2017-03-13T02:49:18.326Z
+  Scenarios launched:  200
+  Scenarios completed: 200
+  Requests completed:  400000
+  RPS sent: 700.67
+  Request latency:
+    min: 0.6
+    max: 1330.8
+    median: 228.9
+    p95: 308.8
+    p99: 357
+  Scenario duration:
+    min: 550603.7
+    max: 554924.2
+    median: 552420.9
+    p95: 553932.2
+    p99: 554552.3
+  Scenario counts:
+    0: 200 (100%)
+  Codes:
+    200: 380015
+    429: 19985
+
+
+
+3 meli-proxy balanceados con Nginx
+
+
+all scenarios completed
+Complete report @ 2017-03-13T04:05:22.948Z
+  Scenarios launched:  200
+  Scenarios completed: 200
+  Requests completed:  400000
+  RPS sent: 881.48
+  Request latency:
+    min: 1.7
+    max: 1271.8
+    median: 153.5
+    p95: 279
+    p99: 344.6
+  Scenario duration:
+    min: 431317.3
+    max: 439275.8
+    median: 436451.6
+    p95: 438534.2
+    p99: 439141.4
+  Scenario counts:
+    0: 200 (100%)
+  Codes:
+    200: 382065
+    429: 17935
+
+
+

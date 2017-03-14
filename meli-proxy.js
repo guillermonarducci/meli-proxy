@@ -21,9 +21,8 @@ var statsMap = new HashMap(); //Module variable shared by all instances of this 
 var exports = module.exports = {};//For testing
 
 if ( !proxyPort || typeof proxyPort != "number" ){
-    winston.error("Proxy Port not specified.");
-    winston.error("Usage: npm start PORT [mockTarget]");
-    process.exit();    
+    winston.info(msg.PROXY_DEFAULT_PORT + conf.PROXY_DEFAULT_PORT);
+    proxyPort=conf.PROXY_DEFAULT_PORT;
 }
 
 if (mockEnabled){

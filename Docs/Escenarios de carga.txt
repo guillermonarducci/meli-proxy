@@ -1,4 +1,10 @@
-Escenario: artillery quick --duration 4 --rate 50 -n 2000 http://localhost:9000/categories/MLA97994
+Escenario: artillery quick --duration 4 --rate 50 -n 2000 http://localhost/categories/MLA97994
+
+Hardware: 
+
+	Intel® Core™2 Quad CPU Q8400 @ 2.66GHz × 4 
+	6GB RAM
+	
 
 Resultados
 
@@ -56,6 +62,35 @@ Complete report @ 2017-03-13T04:05:22.948Z
   Codes:
     200: 382065
     429: 17935
+
+
+3 meli-proxy balanceados con Nginx y 3 mock servers
+
+all scenarios completed
+Complete report @ 2017-03-13T23:51:06.157Z
+  Scenarios launched:  200
+  Scenarios completed: 200
+  Requests completed:  400000
+  RPS sent: 866.16
+  Request latency:
+    min: 1.6
+    max: 577.5
+    median: 150.6
+    p95: 286.9
+    p99: 359.7
+  Scenario duration:
+    min: 439934.4
+    max: 446870.7
+    median: 444103.3
+    p95: 446134.7
+    p99: 446654.9
+  Scenario counts:
+    0: 200 (100%)
+  Codes:
+    200: 382041
+    429: 17959
+
+
 
 
 

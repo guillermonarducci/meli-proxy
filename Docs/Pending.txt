@@ -1,15 +1,13 @@
 
-1) Carga
-
-2) AWS
+1) AWS
  
-3) Nodejs Cluster donde los Childs sumen y el Master acumule y hable contra Redis. IPC para comunicacion entre Master y Childs
+2) Nodejs Cluster donde los Childs sumen y el Master acumule y hable contra Redis. IPC para comunicacion entre Master y Childs
+
+3) API REST Para administrar Quotas 
 
 4) Logstash + kafka + ELK para guardar y visualizar estadisticas
 
-5) API REST Para administrar Quotas 
-
-6) PM2 / Forever para manejo de procesos.
+5) PM2 / Forever para manejo de procesos.
 
 
 

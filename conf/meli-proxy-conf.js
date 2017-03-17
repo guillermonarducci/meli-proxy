@@ -10,10 +10,10 @@ const REDIS_PORT1 ='30001';
 const REDIS_HOST2 ='localhost';
 const REDIS_PORT2 ='30002';
 const LOG_LEVEL ='debug';
-const DEFAULT_QUOTA =5000000000;
+const DEFAULT_QUOTA =3000;
 const QUOTA_TTL_IN_SECONDS ='3600';
-const MAX_LOCAL_REQUEST_COUNT = 1000;
-const MAX_LOCAL_STATS_COUNT = 1000;
+const MAX_LOCAL_REQUEST_COUNT = 100;
+const MAX_LOCAL_STATS_COUNT = 100;
 const REDIS_QUOTA_PREFIX = '_quota:';
 
 var scriptSum = '\  local count = tonumber(redis.call("get", KEYS[1])) \

@@ -4,7 +4,7 @@ Hardware:
 
 	Intel® Core™2 Quad CPU Q8400 @ 2.66GHz × 4 
 	6GB RAM
-	
+
 
 Resultados
 
@@ -64,31 +64,149 @@ Complete report @ 2017-03-13T04:05:22.948Z
     429: 17935
 
 
-3 meli-proxy balanceados con Nginx y 3 mock servers
+3 meli-proxy balanceados con Nginx (loadtest)
 
-all scenarios completed
-Complete report @ 2017-03-13T23:51:06.157Z
-  Scenarios launched:  200
-  Scenarios completed: 200
-  Requests completed:  400000
-  RPS sent: 866.16
-  Request latency:
-    min: 1.6
-    max: 577.5
-    median: 150.6
-    p95: 286.9
-    p99: 359.7
-  Scenario duration:
-    min: 439934.4
-    max: 446870.7
-    median: 444103.3
-    p95: 446134.7
-    p99: 446654.9
-  Scenario counts:
-    0: 200 (100%)
-  Codes:
-    200: 382041
-    429: 17959
+
+narducci@narducci-MS-7519:~$ loadtest -t 60 -c 300 --rps 600 -k  http://localhost/categories/MLA97994
+[Fri Mar 17 2017 13:23:52 GMT-0300 (ART)] INFO Requests: 0, requests per second: 0, mean latency: 0 ms
+[Fri Mar 17 2017 13:23:57 GMT-0300 (ART)] INFO Requests: 2861, requests per second: 572, mean latency: 21.6 ms
+[Fri Mar 17 2017 13:24:02 GMT-0300 (ART)] INFO Requests: 5860, requests per second: 600, mean latency: 11.2 ms
+[Fri Mar 17 2017 13:24:07 GMT-0300 (ART)] INFO Requests: 8859, requests per second: 600, mean latency: 11.3 ms
+[Fri Mar 17 2017 13:24:12 GMT-0300 (ART)] INFO Requests: 11861, requests per second: 601, mean latency: 10.5 ms
+[Fri Mar 17 2017 13:24:17 GMT-0300 (ART)] INFO Requests: 14856, requests per second: 599, mean latency: 11.1 ms
+[Fri Mar 17 2017 13:24:22 GMT-0300 (ART)] INFO Requests: 17860, requests per second: 601, mean latency: 11.2 ms
+[Fri Mar 17 2017 13:24:27 GMT-0300 (ART)] INFO Requests: 20858, requests per second: 600, mean latency: 10.4 ms
+[Fri Mar 17 2017 13:24:32 GMT-0300 (ART)] INFO Requests: 23854, requests per second: 599, mean latency: 10.7 ms
+[Fri Mar 17 2017 13:24:37 GMT-0300 (ART)] INFO Requests: 26861, requests per second: 602, mean latency: 10.3 ms
+[Fri Mar 17 2017 13:24:42 GMT-0300 (ART)] INFO Requests: 29861, requests per second: 600, mean latency: 10.4 ms
+[Fri Mar 17 2017 13:24:47 GMT-0300 (ART)] INFO Requests: 32861, requests per second: 600, mean latency: 11.3 ms
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO Target URL:          http://localhost/categories/MLA97994
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO Max time (s):        60
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO Concurrency level:   300
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO Agent:               keepalive
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO Requests per second: 600
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO Completed requests:  35825
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO Total errors:        0
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO Total time:          60.002206179 s
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO Requests per second: 597
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO Mean latency:        11.6 ms
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO Percentage of the requests served within a certain time
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO   50%      8 ms
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO   90%      23 ms
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO   95%      32 ms
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO   99%      56 ms
+[Fri Mar 17 2017 13:24:52 GMT-0300 (ART)] INFO  100%      171 ms (longest request)
+
+narducci@narducci-MS-7519:~$ loadtest -t 60 -c 300 --rps 700 -k  http://localhost/categories/MLA97994
+[Fri Mar 17 2017 13:25:27 GMT-0300 (ART)] INFO Requests: 0, requests per second: 0, mean latency: 0 ms
+[Fri Mar 17 2017 13:25:32 GMT-0300 (ART)] INFO Requests: 3304, requests per second: 661, mean latency: 28.8 ms
+[Fri Mar 17 2017 13:25:37 GMT-0300 (ART)] INFO Requests: 6794, requests per second: 699, mean latency: 28 ms
+[Fri Mar 17 2017 13:25:42 GMT-0300 (ART)] INFO Requests: 10292, requests per second: 700, mean latency: 19.3 ms
+[Fri Mar 17 2017 13:25:47 GMT-0300 (ART)] INFO Requests: 13810, requests per second: 704, mean latency: 23.2 ms
+[Fri Mar 17 2017 13:25:52 GMT-0300 (ART)] INFO Requests: 17297, requests per second: 697, mean latency: 22.1 ms
+[Fri Mar 17 2017 13:25:57 GMT-0300 (ART)] INFO Requests: 20793, requests per second: 699, mean latency: 20.8 ms
+[Fri Mar 17 2017 13:26:02 GMT-0300 (ART)] INFO Requests: 24304, requests per second: 702, mean latency: 25.1 ms
+[Fri Mar 17 2017 13:26:07 GMT-0300 (ART)] INFO Requests: 27817, requests per second: 703, mean latency: 21.3 ms
+[Fri Mar 17 2017 13:26:12 GMT-0300 (ART)] INFO Requests: 31290, requests per second: 695, mean latency: 24.1 ms
+[Fri Mar 17 2017 13:26:17 GMT-0300 (ART)] INFO Requests: 34809, requests per second: 704, mean latency: 24.1 ms
+[Fri Mar 17 2017 13:26:22 GMT-0300 (ART)] INFO Requests: 38311, requests per second: 700, mean latency: 23 ms
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO Target URL:          http://localhost/categories/MLA97994
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO Max time (s):        60
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO Concurrency level:   300
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO Agent:               keepalive
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO Requests per second: 700
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO Completed requests:  41764
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO Total errors:        0
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO Total time:          60.002952019 s
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO Requests per second: 696
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO Mean latency:        23.5 ms
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO Percentage of the requests served within a certain time
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO   50%      15 ms
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO   90%      54 ms
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO   95%      69 ms
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO   99%      99 ms
+[Fri Mar 17 2017 13:26:27 GMT-0300 (ART)] INFO  100%      144 ms (longest request)
+
+
+narducci@narducci-MS-7519:~$ loadtest -t 60 -c 300 --rps 800 -k  http://localhost/categories/MLA97994
+[Fri Mar 17 2017 13:30:47 GMT-0300 (ART)] INFO Requests: 0, requests per second: 0, mean latency: 0 ms
+[Fri Mar 17 2017 13:30:52 GMT-0300 (ART)] INFO Requests: 3729, requests per second: 746, mean latency: 73.9 ms
+[Fri Mar 17 2017 13:30:57 GMT-0300 (ART)] INFO Requests: 7736, requests per second: 802, mean latency: 97.9 ms
+[Fri Mar 17 2017 13:31:02 GMT-0300 (ART)] INFO Requests: 11728, requests per second: 799, mean latency: 27.3 ms
+[Fri Mar 17 2017 13:31:07 GMT-0300 (ART)] INFO Requests: 15726, requests per second: 800, mean latency: 26.7 ms
+[Fri Mar 17 2017 13:31:12 GMT-0300 (ART)] INFO Requests: 19732, requests per second: 801, mean latency: 40.3 ms
+[Fri Mar 17 2017 13:31:17 GMT-0300 (ART)] INFO Requests: 23727, requests per second: 799, mean latency: 29.3 ms
+[Fri Mar 17 2017 13:31:22 GMT-0300 (ART)] INFO Requests: 27751, requests per second: 804, mean latency: 33.5 ms
+[Fri Mar 17 2017 13:31:27 GMT-0300 (ART)] INFO Requests: 31736, requests per second: 798, mean latency: 27.8 ms
+[Fri Mar 17 2017 13:31:32 GMT-0300 (ART)] INFO Requests: 35721, requests per second: 797, mean latency: 32.5 ms
+[Fri Mar 17 2017 13:31:37 GMT-0300 (ART)] INFO Requests: 39636, requests per second: 783, mean latency: 36.9 ms
+[Fri Mar 17 2017 13:31:42 GMT-0300 (ART)] INFO Requests: 43732, requests per second: 819, mean latency: 48.5 ms
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO Target URL:          http://localhost/categories/MLA97994
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO Max time (s):        60
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO Concurrency level:   300
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO Agent:               keepalive
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO Requests per second: 800
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO Completed requests:  47693
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO Total errors:        0
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO Total time:          60.001167292 s
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO Requests per second: 795
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO Mean latency:        41.8 ms
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO Percentage of the requests served within a certain time
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO   50%      27 ms
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO   90%      77 ms
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO   95%      110 ms
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO   99%      327 ms
+[Fri Mar 17 2017 13:31:47 GMT-0300 (ART)] INFO  100%      725 ms (longest request)
+
+
+narducci@narducci-MS-7519:~$ loadtest -t 60 -c 300 -k  http://localhost/categories/MLA97994
+[Fri Mar 17 2017 13:34:23 GMT-0300 (ART)] INFO Requests: 0, requests per second: 0, mean latency: 0 ms
+[Fri Mar 17 2017 13:34:28 GMT-0300 (ART)] INFO Requests: 4155, requests per second: 831, mean latency: 353.3 ms
+[Fri Mar 17 2017 13:34:33 GMT-0300 (ART)] INFO Requests: 9186, requests per second: 1008, mean latency: 289.8 ms
+[Fri Mar 17 2017 13:34:38 GMT-0300 (ART)] INFO Requests: 14501, requests per second: 1057, mean latency: 288.8 ms
+[Fri Mar 17 2017 13:34:43 GMT-0300 (ART)] INFO Requests: 19909, requests per second: 1088, mean latency: 275.5 ms
+[Fri Mar 17 2017 13:34:48 GMT-0300 (ART)] INFO Requests: 25275, requests per second: 1065, mean latency: 288.5 ms
+[Fri Mar 17 2017 13:34:53 GMT-0300 (ART)] INFO Requests: 30622, requests per second: 1060, mean latency: 280 ms
+[Fri Mar 17 2017 13:34:58 GMT-0300 (ART)] INFO Requests: 35764, requests per second: 1042, mean latency: 286.9 ms
+[Fri Mar 17 2017 13:35:03 GMT-0300 (ART)] INFO Requests: 41144, requests per second: 1060, mean latency: 284 ms
+[Fri Mar 17 2017 13:35:08 GMT-0300 (ART)] INFO Requests: 46337, requests per second: 1055, mean latency: 284.2 ms
+[Fri Mar 17 2017 13:35:13 GMT-0300 (ART)] INFO Requests: 51715, requests per second: 1079, mean latency: 276.7 ms
+[Fri Mar 17 2017 13:35:18 GMT-0300 (ART)] INFO Requests: 57058, requests per second: 1068, mean latency: 282.5 ms
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO Target URL:          http://localhost/categories/MLA97994
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO Max time (s):        60
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO Concurrency level:   300
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO Agent:               keepalive
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO Completed requests:  61855
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO Total errors:        0
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO Total time:          60.008602937000006 s
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO Requests per second: 1031
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO Mean latency:        289.8 ms
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO 
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO Percentage of the requests served within a certain time
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO   50%      271 ms
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO   90%      440 ms
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO   95%      498 ms
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO   99%      626 ms
+[Fri Mar 17 2017 13:35:23 GMT-0300 (ART)] INFO  100%      1488 ms (longest request)
+
+
+
+
+
+
+
+
 
 
 

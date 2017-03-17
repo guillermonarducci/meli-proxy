@@ -1,13 +1,60 @@
+Sharding de la quota y contadores
 
-1) AWS
+
+Agregar backets (hash tags) a las claves para garantizar que solo la IP/PATH/IP+PATH se hashean. Esto asegura que las keys:
+
+		{127.0.0.1}
+		_quota:{127.0.0.1}
+
+Están en el mismo hash slot, y pueden ser utilizadas por el LUA Script para obtener la quota específica al incrementar
+
+
+
+
+OPCION ioredis (WIP)
+--------------
+
+	a)	Instalar redis cluster (OK)
+	b)	Client side sharding con ioredis (OK)
+	c) 	Agregar hash tags a los recursos auditados para que queden siempre en el mismo has slot (OK)
+	d)	ioredis también en la API REST de administracion (WIP) 
+	e) 	Modificar LUA Script para devolver el MOVED al cliente de ioredis (PENDING)
+
+
+
+OPCION twemproxy (PENDING)
+----------------
+
+
+	a)	Instalar redis cluster
+	b)	Instalar Twemproyx
+	c)	Apuntar los clientes al twemproxy
+	d) 	Agregar hash tags a los recursos auditados para que queden siempre en el mismo has slot???
+	e)	Modificar LUA Script para devolver el MOVED al proxy??? 
+
+
+
+OPCION Custom (PENDING)
+-------------
+
+	a)	Instalar redis cluster
+	b)	Cuando el cliente se registra a un nodo pide un NODE SLOTS y cachea el mapping entre nodos y hash slots
+	c)	Client side sharding con funcion que calcula un CRC16 sobre la key y % 16383--> https://www.npmjs.com/package/crc16     
+	c)	Apuntar dinamicamente al nodo correspondiente
+	d) 	Manejo de respuesta MOVED para reintentar contra nuevo nodo.
+	e)	Modificar LUA Script para devolver el MOVED al cliente
+
+
+Otros
+-----
+
+1) Cliente de Redis con scope de modulo
  
 2) Nodejs Cluster donde los Childs sumen y el Master acumule y hable contra Redis. IPC para comunicacion entre Master y Childs
 
-3) API REST Para administrar Quotas 
+3) Logstash + kafka + ELK para guardar y visualizar estadisticas
 
-4) Logstash + kafka + ELK para guardar y visualizar estadisticas
-
-5) PM2 / Forever para manejo de procesos.
+4) PM2 / Forever para manejo de procesos.
 
 
 

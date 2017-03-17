@@ -1,7 +1,8 @@
 var http = require('http');
 var httpProxy = require('http-proxy');
 var HashMap = require('hashmap'); 
-var redis = require('redis');
+//var redis = require('redis');
+var Redis = require('ioredis');
 var conf = require('./conf/meli-proxy-conf.js');
 var msg = require('./conf/meli-proxy-messages.js');
 var Request = require('./model/request.js');
@@ -9,6 +10,7 @@ var RequestStat = require('./model/requestStat.js');
 var ElementInfo = require('./model/elementInfo.js');
 var winston = require('winston');
 winston.level = conf.LOG_LEVEL; //TODO use process.env.LOG_LEVEL 
+
 
 var apiEndpoint=conf.MELI_API_BASE;
 var proxyPort=parseInt(process.argv[2], 10);
@@ -130,13 +132,21 @@ function incrementRequestCount (auditedElementsArray) {
 
 function addOnRedis (element, requestsCount) {
 
-    var redisCli = redis.createClient(conf.REDIS_PORT, conf.REDIS_HOST, {no_ready_check: true});
+    //var redisCli = redis.createClient(conf.REDIS_PORT, conf.REDIS_HOST, {no_ready_check: true});
+
+    var cluster = new Redis.Cluster([{
+      port: conf.REDIS_PORT1,
+      host: conf.REDIS_HOST1
+    }, {
+      port: conf.REDIS_PORT2,
+      host: conf.REDIS_HOST2
+    }]);
   
-    redisCli.on('connect', function() {
+    cluster.on('connect', function() {
 
         winston.debug('Adding on Redis ' + requestsCount + ' requests to key ' + element );
 
-        this.eval(conf.LUA_SCRIPT_SUM, 3, element, requestsCount, conf.REDIS_QUOTA_PREFIX, function (err, res){
+        this.eval(conf.LUA_SCRIPT_SUM, 1, element, requestsCount, conf.REDIS_QUOTA_PREFIX, function (err, res){
 
             if (err) {
 

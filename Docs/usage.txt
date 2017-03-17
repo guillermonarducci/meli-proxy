@@ -1,9 +1,22 @@
 1) npm install
 
-2) npm start (Full version)
+2) npm start PORT (Full version)
 
 or
 
-npm start -mockTarget (Mocks the target usign an internal http server instead of proxing to https://api.mercadolibre.com)
+npm start PORT -mockTarget (Mocks the target usign an internal http server instead of proxing to https://api.mercadolibre.com)
+
+
+
+
+Install redis cluster
+
+gem install redis
+
+utils/create-cluster
+
+create-cluster start
+create-cluster create
+	create-cluster stop
 
 
